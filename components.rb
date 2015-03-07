@@ -1,0 +1,6 @@
+Pos = Struct.new(:x,:y)
+Velocity = Struct.new(:vx,:vy)
+Glyph = Struct.new(:char, :color)
+Mind = Struct.new(:type)
+VOID_GLYPH = Glyph.new(" ", Gosu::Color::NONE)
+ACTOR_GLYPH = Glyph.new("@", Gosu::Color::YELLOW)
