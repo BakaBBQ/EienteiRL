@@ -6,17 +6,40 @@ require_relative 'helper'
 require_relative 'map'
 require_relative 'components'
 require_relative 'logic'
+require_relative 'camera'
+require_relative 'bullet'
+require 'ruby-prof'
 
-CANVAS_WIDTH = 65
+CANVAS_WIDTH = 75
 CANVAS_HEIGHT = 32
 
 FONT_HEIGHT = 20
-FONT_WIDTH = 14
+FONT_WIDTH = 11
+
+INPUT_WAIT = 2
+
+TITLE = "EienteiRL"
+
+$wait_for_player_to_make_up_decision = false
+
+def waiting_for_player_deide?
+  return $wait_for_player_to_make_up_decision
+end
+
+def wait_for_player_to_decide
+  $wait_for_player_to_make_up_decision = true
+end
+
+def player_decided
+  $wait_for_player_to_make_up_decision = false
+end
+
+
 
 class GameWindow < Gosu::Window
   def initialize
-    super FONT_WIDTH * CANVAS_WIDTH, FONT_HEIGHT * CANVAS_HEIGHT, false
-    self.caption = "EienteiRl"
+    super FONT_WIDTH * CANVAS_WIDTH, FONT_HEIGHT * CANVAS_HEIGHT, false, 50
+    self.caption = TITLE
 
     @font = Gosu::Font.new(self, "fonts/DejaVuSansMono.ttf", FONT_HEIGHT)
 
@@ -27,64 +50,44 @@ class GameWindow < Gosu::Window
 
     @minibuffer = []
 
-    @actor = Factory.create_actor(3,2)
+    @actor = Factory.create_actor(3,3)
     r = Factory.rabbit(3,4)
-    @entities = [@actor,r]
+    b = Factory.bullet(15,3,1,1)
+    @entities = [@actor,r,b]
 
     @input_timer = 0
+    
+    @time = Time.new(1969,9,12,2,0,0)
 
     do_turn
   end
 
-  INPUT_WAIT = 8
+  
   def update
-    @input_timer += 1
-    update_movement if @input_timer >= INPUT_WAIT
-
+    do_turn
+    self.caption = "#{TITLE} - fps: #{Gosu.fps}"
   end
 
-  def update_movement
-    delta_vx = 0 #maybe just call it ax...
-    delta_vy = 0
-
-    if button_down?(char_to_button_id('s'))
-      delta_vy += 1
-    end
-
-    if button_down?(char_to_button_id('w'))
-      delta_vy -= 1
-    end
-
-    if button_down?(char_to_button_id('a'))
-      delta_vx -= 1
-    end
-
-    if button_down?(char_to_button_id('d'))
-      delta_vx += 1
-    end
-
-    if delta_vx != 0 || delta_vy != 0
-      @actor.velocity = Velocity.new(delta_vx, delta_vy)
-      @input_timer = 0
-      do_turn
-    end
-
-  end
 
 
   def do_turn
-    turn(@entities,@map,@canvas,@minibuffer)
+    @time = turn(@time,@entities,@map,@canvas,@minibuffer)
   end
-
 
   def draw
     @canvas.data.each_with_index do |fv, cx|
-      fv.each_with_index do |glyph, cy|
-        @font.draw(glyph.char, cx * FONT_WIDTH, cy * FONT_HEIGHT, 0, 1.0, 1.0, glyph.color)
+      fv.compact.each_with_index do |glyph, cy|
+        if glyph.invert
+          draw_rect(cx * FONT_WIDTH, cy * FONT_HEIGHT, FONT_WIDTH, FONT_HEIGHT, glyph.color)
+          @font.draw(glyph.char, cx * FONT_WIDTH, cy * FONT_HEIGHT, 0, 1.0, 1.0, Gosu::Color::BLACK)
+        else
+          @font.draw(glyph.char, cx * FONT_WIDTH, cy * FONT_HEIGHT, 0, 1.0, 1.0, glyph.color)
+        end
+        
       end
     end
-
   end
+  
 end
 
 

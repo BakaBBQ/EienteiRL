@@ -21,12 +21,20 @@ class << Factory
     actor.velocity = Velocity.new(0,0)
     actor.tap do |a|
       a.name = "LBQ"
-      a.class = "Gardener"
+      a.clazz = "gardener"
+      a.race = "human"
       a.hp = 15
       a.mhp = 15
       a.mp = 45
       a.mmp = 50
       a.turns = 0
+      a.speed = 10
+      
+      a.energy = 0
+      
+      a.score = 0
+      a.player = true
+      a.mind = :player
     end
     return actor
   end
@@ -40,7 +48,25 @@ class << Factory
       o.name = "Rabbit"
       o.mhp = gen_mhp(8,4)
       o.hp = o.mhp
+      o.mind = :silly
+      
+      o.alertness = 5
+      o.energy = 0
+      o.speed = 12
     end
     return rabbit
+  end
+  
+  def bullet(x,y,sx,sy,char="*",color=Gosu::Color::YELLOW)
+    bullet = OpenStruct.new
+    bullet.tap do |o|
+      o.glyph = Glyph.new(char,color)
+      o.pos = Pos.new(x,y)
+      o.rpos = Pos.new(x * 10, y * 10)
+      o.rvel = Velocity.new(sx * 10, sy * 10)
+      o.speed = 8
+      o.energy = 0
+    end
+    return bullet
   end
 end

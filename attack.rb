@@ -1,17 +1,17 @@
-class Movement ; end
+class Attack ; end
 
 
 require_relative 'helper'
 require_relative 'vocab'
-class << Movement
-  def process(entities, map, canvas, minibuffer)
-    entities.select{|e| e.velocity}.each do |e|
-      process_single_entity(entities, e, map, minibuffer)
-    end
-  end
-
+class << Attack
   def process_single_entity(entities, e, map, minibuffer,canvas)
-    return unless e.velocity
+    attack_move = e.attack_move
+    return unless attack_move
+    
+    attack_move.targets.each do |t|
+      dmg = attack_move.dice.call
+      
+    end
     future_x = e.pos.x + e.velocity.vx
     future_y = e.pos.y + e.velocity.vy
 
@@ -28,6 +28,7 @@ class << Movement
     e.velocity.vx = 0
     e.velocity.vy = 0
     
-    
+    canvas.clear
+    canvas.mash(map,entities)
   end
 end

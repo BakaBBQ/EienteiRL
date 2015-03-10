@@ -1,5 +1,6 @@
 # a 2d array of strings
 require_relative 'components'
+require_relative 'helper'
 class Canvas
   attr_accessor :data
   def initialize
@@ -12,11 +13,32 @@ class Canvas
   end
 
   private
-  def mash_map(map)
-    map.lines.each_with_index do |l,y|
+  def mash_map(map,camera_map,array_of_entities)
+    p = array_of_entities[0]
+    fx, fy = *Camera.get_focus(p)
+    camera_map.lines.each_with_index do |l,y|
       l.length.times do |t|
-        @data[t][y] = Glyph.new(l[t],Gosu::Color.argb(0xff606060)) if map.explored?(t,y)
-        @data[t][y] = Glyph.new(l[t],Gosu::Color::WHITE) if map.lit?(t,y)
+        #
+        c = Gosu::Color::WHITE
+        m =  map.colormap
+        if m[[t+fx,y+fy]]
+          c = m[[t+fx,y+fy]]
+        else
+          c = Gosu::Color::BLACK
+        end
+        #c = Gosu::Color::WHITE
+        g = Glyph.new(l[t],c)
+        next if g.char == "\n"
+        if need_invert? g.char
+          g.invert = true
+        end
+        #forgotton_color = g.color.dup
+        #forgotton_color.alpha = (g.color.alpha * 0.2).round
+        forgotton_color = Gosu::Color.new(40,255,255,255)
+        forgotton_glyph = g.clone
+        forgotton_glyph.color = forgotton_color
+        @data[t][y] = forgotton_glyph if map.explored?(t+fx,y+fy)
+        @data[t][y] = g if map.lit?(t+fx,y+fy)
       end
     end
   end
@@ -78,12 +100,38 @@ class Canvas
       @data[x + i][y] = Glyph.new(c, color)
     end
   end
+  
+  def draw_mid_text(text,x,endx,y,color=Gosu::Color::WHITE)
+    l = text.length
+    real_x = ((endx - x) - l)/2 + x
+    draw_text(text,real_x,y,color)
+  end
+  
 
 
   def mash(map, array_of_entities)
-    mash_map(map)
+    new_map = map.clone
+    p = array_of_entities[0]
+    new_map.raw = map.fit_for_the_camera(p)
+    
+    fx = Camera.get_focus(p)[0]
+    fy = Camera.get_focus(p)[1]
+    
+    mash_map(map,new_map,array_of_entities)
     array_of_entities.each do |e|
-      @data[e.pos.x][e.pos.y] = e.glyph if map.lit?(e.pos.x,e.pos.y)
+      if map.lit?(e.pos.x,e.pos.y)
+        c = e.glyph.color
+        m =  map.colormap
+        if m[[e.pos.x+fx,e.pos.y+fy]]
+          c = [m[[e.pos.x+fx,e.pos.y+fy]], e.glyph.color].color_mean
+        else
+          dark_color = e.glyph.color.dup
+          dark_color.alpha = 90
+          c = dark_color
+        end
+        @data[e.pos.x - fx][e.pos.y - fy] = Glyph.new(e.glyph.char,c)
+        e.discovered = true
+      end
     end
   end
 
