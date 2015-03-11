@@ -48,7 +48,7 @@ def turn(time,entities, map, canvas,minibuffer)
       #let's go very imperative this time
     
       end_this = false
-      entities.each do |e|
+      entities.select{|e| e.energy}.each do |e|
         e.energy+=1
         if e.energy >= e.speed
           Mind.process_single_entity(entities, e, map, minibuffer)

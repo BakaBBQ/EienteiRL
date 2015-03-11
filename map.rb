@@ -399,14 +399,16 @@ class Map
   attr_accessor :raw
   attr_accessor :lightmap, :colormap
   attr_accessor :explored
-  def initialize(raw)
+  def initialize(raw,lights_coord)
     @raw = raw
-    @lights = [Light.new(Gosu::Color::WHITE, 10, Pos.new(1,1))]
-    @lights << Light.new(Gosu::Color::WHITE, 10, Pos.new(7,4))
-    @lights << Light.new(Gosu::Color::WHITE, 10, Pos.new(20,10))
-    @lights << Light.new(Gosu::Color::WHITE, 10, Pos.new(24,8))
-    @lights << Light.new(Gosu::Color::WHITE, 10, Pos.new(20,20))
-    @lights << Light.new(Gosu::Color::YELLOW, 10, Pos.new(3,22))
+    @lights = []
+    
+    #lights_coord.each do |c|
+     # @lights << Light.new(Gosu::Color::RED, 10, Pos.new(c[0],c[1]))
+   # end
+   
+   @lights << Light.new(Gosu::Color::WHITE,10,Pos.new(4,4))
+    
     @lightmap = {}
     @colormap = {}
     @explored = {}

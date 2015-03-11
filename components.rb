@@ -1,7 +1,7 @@
 Pos = Struct.new(:x,:y)
 Velocity = Struct.new(:vx,:vy)
 Glyph = Struct.new(:char, :color) do
-  attr_accessor :invert
+  attr_accessor :invert, :item
 end
 
 Mind = Struct.new(:type)

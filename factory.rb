@@ -69,4 +69,44 @@ class << Factory
     end
     return bullet
   end
+  
+  def create_point_item(x,y)
+    point_item = OpenStruct.new
+    point_item.tap do |p|
+      g = Glyph.new("p",Gosu::Color::BLUE)
+      g.item = true
+      p.glyph = g
+      p.pos = Pos.new(x,y)
+      
+      p.point = 200
+    end
+    return point_item
+  end
+  
+  def create_power_item(x,y)
+    point_item = OpenStruct.new
+    point_item.tap do |p|
+      g = Glyph.new("p",Gosu::Color::RED)
+      g.item = true
+      p.glyph = g
+      p.pos = Pos.new(x,y)
+      
+      p.power = 1
+    end
+    return point_item
+  end
+  
+  def create_night_item(x,y)
+    point_item = OpenStruct.new
+    point_item.tap do |p|
+      g = Glyph.new("n",Gosu::Color::FUCHSIA)
+      g.item = true
+      p.glyph = g
+      p.pos = Pos.new(x,y)
+      
+      p.power = 1
+    end
+    return point_item
+  end
+  
 end

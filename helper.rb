@@ -127,10 +127,6 @@ class Gosu::Color
   alias a= alpha=
 end
 
-#expensive function
-def can_see_player?()
-end
-
 def slurp file_name
   return File.open(file_name, "rb").read
 end

@@ -1,4 +1,5 @@
 require 'pry'
+require 'theseus'
 #Bresenham's line algorithm
 #http://www.roguebasin.com/index.php?title=Bresenham%27s_Line_Algorithm
 
@@ -54,8 +55,15 @@ class Room
     @tiles[x][y] = rune
   end
   
-  def place_line(x0,y0,x1,y1,rune)
+  def place_line(x0,y0,x1,y1,rune,thickness=1)
     points = get_line(x0,x1,y0,y1)
+    
+    thickness.times do |t|
+      y_offset = thickness / 2 + t
+      points += get_line(x0,x1,y0 + y_offset,y1 + y_offset)
+    end
+    
+    
     points.each do |p|
       place(p[:x],p[:y],rune)
     end
@@ -190,18 +198,128 @@ class Library < Room
 end
 
 
-
-class Floor < Room
+class CorridorFloor < Room
+  def initialize
+    super(120,80)
+    
+    
+    @startx = rand(width)
+    @starty = rand(height)
+    
+    #@nodes = []
+    #nodes_construction
+    #@nodes.sort!
+    #p @nodes
+    
+    @nodes.each_with_index do |n,i|
+      if @nodes[i+1]
+        place_line(n[0],n[1],@nodes[i+1][0],@nodes[i+1][1],".",10)
+      end
+    end
+    
+    fill_rect(@startx - 5,@starty - 5, @startx+5, @starty+5,".")
+    place(@startx,@starty,">")
+  end
+  
+  def nodes_construction
+    @nodes << [@startx,@starty,0]
+    construct_single_node(@startx,@starty,:horz,0)
+  end
+  
+  def construct_single_node(x,y,dir,depth)
+    a = (dir == :horz ? x : (x - 50 + rand(100)))
+    b = (dir == :vert ? y : (y - 50 + rand(100)))
+    @nodes.push [a,b,depth]
+    #p [x,y,a,b]
+   # p [a,b]
+    
+    next_direction = (dir == :horz ? :vert : :horz)
+    if @nodes.length <= 15
+      construct_single_node(x,y,next_direction,depth+1)
+    end
+  end
+  
+  def gen
+    fill_rect(0,0,width-1,height-1,"#")
+  end
 end
 
+
+class FunFloor < Room
+  attr_accessor :exit
+  attr_accessor :start
+  
+  attr_reader :nodes
+  def initialize
+    super(90,90)
+    
+    
+    se = some_entrance_and_exit
+    #p [*se[0]]
+    maze = Theseus::OrthogonalMaze.new(width:20, height:20,entrance: [*se[0]],exit: [*se[1]])
+    maze.generate!
+    solver = maze.new_solver(type: :astar)
+    while solver.step do
+      
+    end
+    solution = solver.solution
+    
+    @nodes = []
+    solution.each do |s|
+      @nodes << [s[0] * 3 + 10, s[1] * 3 + 10]
+    end
+    
+    @nodes.each_with_index do |n,i|
+      if @nodes[i+1]
+        fill_rect(n[0]-3,n[1]-3,@nodes[i+1][0]+3,@nodes[i+1][1]+3,".")
+      end
+    end
+    s = @nodes.first
+    sx = s[0]
+    sy = s[1]
+    
+    f = @nodes.last
+    fx = f[0]
+    fy = f[1]
+    
+    place(sx,sy,">")
+    place(fx,fy,"<")
+    
+    self.exit = f
+    self.start = s
+  end
+  
+  def some_entrance_and_exit
+    pos = [:ul, :ur, :ll, :lr].sample
+    point = {
+      :ul => [0,0],
+      :ur => [19,0],
+      :ll => [0,19],
+      :lr => [19,19]
+    }
+    opp_point = {
+      :ul => :lr,
+      :ur => :ll,
+      :ll => :ur,
+      :lr => :ul
+    }
+    opp_pos = point[opp_point[pos]]
+    current_pos = point[pos]
+    return [current_pos, opp_pos]
+  end
+  
+  def gen
+    fill_rect(0,0,width-1,height-1,"#")
+  end
+end
 
 #f = Floor.new(60,60)
 #puts f
 
 def t
-  a = Library.new
+  a = FunFloor.new
   puts a
 end
-
 t
-binding.pry
+
+#binding.pry

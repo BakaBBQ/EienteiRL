@@ -37,6 +37,15 @@ class << Render
     canvas.draw_text("mp:#{actor.mp}/#{actor.mmp}",CANVAS_WIDTH - 23, PLAYER_STATS_START + 3)
     canvas.draw_stairs_gauge(CANVAS_WIDTH - 12, PLAYER_STATS_START + 3, 10, actor.mp, actor.mmp)
     canvas.draw_mid_text("#{fmt_time(time)}",CANVAS_WIDTH - 23,CANVAS_WIDTH - 1,CANVAS_HEIGHT - 3)
+    
+    canvas.draw_horz_line(12, CANVAS_WIDTH - 24, CANVAS_WIDTH - 1)
+    
+    entities[1..(entities.length - 1)].select{|e| e.name && map.lit?(e.pos.x,e.pos.y)}.take(4).each_with_index do |seen_e, i|
+      e = seen_e
+      canvas.draw_text(seen_e.glyph.char,CANVAS_WIDTH - 23,14 + i, seen_e.glyph.color)
+      canvas.draw_text("- " + seen_e.name.chars.take(11).join,CANVAS_WIDTH - 20,14 + i)
+      canvas.draw_stairs_gauge(CANVAS_WIDTH - 6, 14 + i, 3, e.hp, e.mhp,"▁▂▃▄▅▆▇█",Gosu::Color.new(255,233,196,176))
+    end
 
     canvas.draw_minibuffer(minibuffer)
   end

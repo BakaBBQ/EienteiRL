@@ -11,9 +11,23 @@ class Canvas
   def clear
     @data = Array.new(CANVAS_WIDTH){Array.new(CANVAS_HEIGHT){VOID_GLYPH}}
   end
+  
+  def mash_text(text, x, y)
+    text.lines.each_with_index do |l,y|
+      l.length.times do |t|
+        next if l[t] == "\n"
+        @data[t + x][t + y] = Glyph.new(l[t],Gosu::Color::WHITE)
+      end
+      
+    end
+    
+  end
+  
 
   private
   def mash_map(map,camera_map,array_of_entities)
+    debug_mode = true
+    
     p = array_of_entities[0]
     fx, fy = *Camera.get_focus(p)
     camera_map.lines.each_with_index do |l,y|
@@ -26,6 +40,8 @@ class Canvas
         else
           c = Gosu::Color::BLACK
         end
+        
+        c = Gosu::Color::WHITE if debug_mode
         #c = Gosu::Color::WHITE
         g = Glyph.new(l[t],c)
         next if g.char == "\n"
@@ -88,6 +104,8 @@ class Canvas
 
     left = v - wholes * unit
     left_rate = left / unit.to_f
+    
+    return if left_rate == 0
 
     r = runes.chars[(runes.chars.length * left_rate).round]
     @data[x + wholes][y] = Glyph.new(r, color)
@@ -123,13 +141,17 @@ class Canvas
         c = e.glyph.color
         m =  map.colormap
         if m[[e.pos.x+fx,e.pos.y+fy]]
-          c = [m[[e.pos.x+fx,e.pos.y+fy]], e.glyph.color].color_mean
+          #c = [m[[e.pos.x+fx,e.pos.y+fy]], e.glyph.color].color_mean
         else
           dark_color = e.glyph.color.dup
           dark_color.alpha = 90
           c = dark_color
         end
-        @data[e.pos.x - fx][e.pos.y - fy] = Glyph.new(e.glyph.char,c)
+        
+        new_g = e.glyph.clone
+        new_g.color = c
+        new_g.char = e.glyph.char
+        @data[e.pos.x - fx][e.pos.y - fy] = new_g
         e.discovered = true
       end
     end
