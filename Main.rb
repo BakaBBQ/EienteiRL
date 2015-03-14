@@ -4,4 +4,4 @@
 require 'rubygems'
 require 'gosu'
 
-require 'game'
+require_relative 'game'

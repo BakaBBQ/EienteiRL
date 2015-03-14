@@ -61,7 +61,7 @@ DIRECTION2VI = {
 
 PROFILE_PATH = File.join(Dir.home, "EienteiRL", "profile.rb")
 FileUtils.mkpath File.join(Dir.home, "EienteiRL") unless File.exists?(File.join(Dir.home, "EienteiRL"))
-FileUtils.cp("./presets/profile.rb",path) unless File.exists?(PROFILE_PATH)
+FileUtils.cp("./presets/profile.rb",PROFILE_PATH) unless File.exists?(PROFILE_PATH)
 
 class Gosu::Color
   STAIR = Gosu::Color.new(255,180,255,10)
