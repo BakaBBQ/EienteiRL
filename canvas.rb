@@ -1,6 +1,8 @@
+# encoding: UTF-8
 # a 2d array of strings
 require_relative 'components'
 require_relative 'helper'
+
 class Canvas
   attr_accessor :data
   def initialize
@@ -13,48 +15,43 @@ class Canvas
   end
   
   def mash_text(text, x, y)
-    text.lines.each_with_index do |l,y|
+    text.lines.each_with_index do |l,y_offset|
       l.length.times do |t|
         next if l[t] == "\n"
-        @data[t + x][t + y] = Glyph.new(l[t],Gosu::Color::WHITE)
+        @data[t + x][y + y_offset] = Glyph.new(l[t],Gosu::Color::WHITE)
       end
-      
     end
-    
   end
-  
 
   private
   def mash_map(map,camera_map,array_of_entities)
-    debug_mode = true
+    fx, fy = *Camera.get_focus(array_of_entities.first)
+    a = map.arraylized
+    draw_range_x = (0...a.size).to_a - (0..(fx)).to_a
+    draw_range_y = (0...a[0].size).to_a - (0..(fy)).to_a
+    draw_range_x = draw_range_x.insert(0,draw_range_x[0]-1)
+    draw_range_y = draw_range_y.insert(0,draw_range_y[0]-1)
     
-    p = array_of_entities[0]
-    fx, fy = *Camera.get_focus(p)
-    camera_map.lines.each_with_index do |l,y|
-      l.length.times do |t|
-        #
-        c = Gosu::Color::WHITE
-        m =  map.colormap
-        if m[[t+fx,y+fy]]
-          c = m[[t+fx,y+fy]]
-        else
-          c = Gosu::Color::BLACK
+    draw_range_x.each do |x|
+      draw_range_y.each do |y|
+        original_char = a[x][y]
+        break if (x - fx) > CANVAS_WIDTH - 27
+        break if (y - fy) > CANVAS_HEIGHT - 5
+
+        if map.explored?(x,y) && !map.lit?(x,y)
+          glyph = Glyph.new(original_char, Gosu::Color.new(140,255,255,255))
+        elsif map.lit?(x,y)
+           glyph = Glyph.new(original_char, Gosu::Color.new(255,255,255,255))
         end
         
-        c = Gosu::Color::WHITE if debug_mode
-        #c = Gosu::Color::WHITE
-        g = Glyph.new(l[t],c)
-        next if g.char == "\n"
-        if need_invert? g.char
-          g.invert = true
+        if map.explored?(x,y)
+          glyph.invert = true if need_invert? original_char
+          glyph.color = Gosu::Color::STAIR if [">","<"].include?(original_char)
+          @data[x - fx][y - fy] = glyph 
         end
-        #forgotton_color = g.color.dup
-        #forgotton_color.alpha = (g.color.alpha * 0.2).round
-        forgotton_color = Gosu::Color.new(40,255,255,255)
-        forgotton_glyph = g.clone
-        forgotton_glyph.color = forgotton_color
-        @data[t][y] = forgotton_glyph if map.explored?(t+fx,y+fy)
-        @data[t][y] = g if map.lit?(t+fx,y+fy)
+        
+          #end
+        
       end
     end
   end
@@ -99,11 +96,27 @@ class Canvas
     unit = vmax / length.to_f
     wholes = (v / unit).floor
     wholes.times do |t|
-      @data[x + t][y] = Glyph.new(runes.chars.last, color)
+      @data[x + t][y] = Glyph.new(runes.chars.to_a.last, color)
     end
 
     left = v - wholes * unit
     left_rate = left / unit.to_f
+    
+    return if left_rate == 0
+
+    r = runes.chars.to_a[(runes.chars.to_a.length * left_rate).round]
+    @data[x + wholes][y] = Glyph.new(r, color)
+  end
+  
+  def draw_deck(x,y,decks,meter,runes="▁▂▃▄▅▆▇█",color=Gosu::Color::YELLOW)
+    
+    wholes = meter / 100
+    wholes.times do |t|
+      @data[x + t][y] = decks[t].glyph
+    end
+
+    left = meter - wholes * 100
+    left_rate = left / 100.to_f
     
     return if left_rate == 0
 
@@ -136,7 +149,7 @@ class Canvas
     fy = Camera.get_focus(p)[1]
     
     mash_map(map,new_map,array_of_entities)
-    array_of_entities.each do |e|
+    array_of_entities.sort_by{|e| e.bullet ? 1 : 0}.each do |e|
       if map.lit?(e.pos.x,e.pos.y)
         c = e.glyph.color
         m =  map.colormap
@@ -149,8 +162,13 @@ class Canvas
         end
         
         new_g = e.glyph.clone
-        new_g.color = c
+        #new_g.color = c
         new_g.char = e.glyph.char
+        
+        if e.was_target
+          new_g.invert = true
+        end
+        
         @data[e.pos.x - fx][e.pos.y - fy] = new_g
         e.discovered = true
       end

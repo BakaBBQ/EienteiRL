@@ -1,1 +1,11 @@
-A typical magician is equiped with a myraid of skills to aid them in almost everything but in their poor short range fight.
+A typical magician you are,
+equiped with a myraid of skills to aid
+you in battle. Yet you suffer quite a lot
+from your poor health.
+
+Pros:
+Great AOE
+Versatile skillset
+
+Cons:
+Lackluster defense

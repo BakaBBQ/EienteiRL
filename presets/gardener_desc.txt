@@ -1,1 +1,13 @@
-As a gardener for a strong master, you developed both good speed and exceptional damage, but has short range.
+As a gardener for a extremely powerful master,
+you managed to develop outstanding speed and
+good damage.
+
+Gardener is a straight-forward class, you rush
+to the enemy, slash them, then go to the next.
+
+Pros:
+great speed
+goood damage
+
+Cons:
+lackluster range

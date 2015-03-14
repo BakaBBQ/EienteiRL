@@ -15,13 +15,24 @@ class << Bullet
     grid_x, grid_y = *get_grid_x_y(e)
 
     if movable_in_entity?(entities,grid_x,grid_y) && movable_in_map?(map,grid_x,grid_y)
-      "can move"
       e.pos.x = grid_x
       e.pos.y = grid_y
     elsif !movable_in_map?(map,grid_x,grid_y)
       e.destroy = true
-    elsif !movable_in_entity?(entities[1..(entities.length-1)],grid_x,grid_y)
-      pop_msg(minibuffer, "bullet_collide_entity") if entities[0] == e
+    elsif !movable_in_entity?(entities[0..(entities.length-1)],grid_x,grid_y)
+      all_obstacles = get_entity_on(entities,grid_x,grid_y)
+      if all_obstacles.include? entities.first
+        if entities.first.just_moved
+        else
+          entities.first.hp -= e.damage
+        end
+        e.destroy = true
+      else
+        e.pos.x = grid_x
+        e.pos.y = grid_y
+      end
+      
+      
     end
   end
   

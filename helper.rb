@@ -1,8 +1,8 @@
-require 'pry'
+
 def movable_in_map?(map,x,y)
   #binding.pry
   begin
-    !(['#'].include?(map.lines[y][x]))
+    !(['#'].include?(map.arraylized[x][y]))
   rescue
     p "movable failed #{x}, #{y}"
     false
@@ -13,17 +13,36 @@ def need_invert?(char)
   return ['#'].include? char
 end
 
+def shift_deck a
+  first = a.first
+  rest = a[1...a.length]
+  rest << first
+  return rest
+end
+
 def draw_rect(x,y,width,height,c)
   draw_quad(x,y,c,x+width,y,c,x,y+height,c,x+width,y+height,c)
 end
 
 def movable_in_entity?(entities,x,y)
-  entities[0..(entities.length-1)].select{|e| e.pos.x == x}.select{|e| e.pos.y == y}.empty?
+  get_entity_on(entities,x,y).empty? || get_entity_on(entities,x,y).all?{|e| e.bullet || e.item}
 end
+
+def get_entity_on(entities,x,y)
+  entities[0..(entities.length-1)].select{|e| e.pos.x == x}.select{|e| e.pos.y == y}
+end
+
+def get_entity_seen(e,entities,map)
+  entities.select{|e| (! e.bullet) && (! e.item) &&map.lit?(e.pos.x,e.pos.y)}
+end
+
+def get_bullets_seen(e,entities,map)
+  entities.select{|e| ( e.bullet) && map.lit?(e.pos.x,e.pos.y)}
+end
+
 
 def tiles_to_readable(data)
   lines = []
-  
   height = data[0].size
   width = data.size
   
@@ -68,6 +87,9 @@ def arraylize(str)
   str.chars
 end
 
+def generate_dice x, y, level = 0
+  return eval("lambda{rand(#{x} + #{level}) + #{y} + #{level}}")
+end
 
 def movable?(entities,map,x,y)
   movable_in_map?(map,x,y) && movable_in_entity?(entities,x,y)
@@ -82,6 +104,11 @@ end
 def raw_distance(x0,y0,x1,y1)
   return Math.hypot(x0 - x1, y0 - y1)
 end
+
+def entity_distance(e1,e2)
+  return raw_distance(e1.pos.x,e1.pos.y,e2.pos.x,e2.pos.y)
+end
+
 
 
 class Array

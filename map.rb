@@ -379,11 +379,11 @@ class DummyMap
   end
   
   def width
-    return @raw.lines[0].length
+    return @raw.lines.to_a[0].length
   end
   
   def height
-    return @raw.lines.length
+    return @raw.lines.to_a.length
   end
 end
 
@@ -399,9 +399,10 @@ class Map
   attr_accessor :raw
   attr_accessor :lightmap, :colormap
   attr_accessor :explored
-  def initialize(raw,lights_coord)
+  def initialize(raw)
     @raw = raw
     @lights = []
+    
     
     #lights_coord.each do |c|
      # @lights << Light.new(Gosu::Color::RED, 10, Pos.new(c[0],c[1]))
@@ -418,18 +419,81 @@ class Map
     #binding.pry
   end
   
+  def bind_entities(entities)
+    a = arraylized
+    
+    empties = []
+    width.times do |x|
+      height.times do |y|
+        case a[x][y]
+        when "r"
+          entities << Factory.rabbit(x,y)
+          a[x][y] = "."
+        when "f"
+          entities << Factory.small_fairy(x,y)
+          a[x][y] = "."
+        when "p"
+          entities << Factory.create_point_item(x,y)
+          a[x][y] = "."
+        when "P"
+          entities << Factory.create_power_item(x,y)
+          a[x][y] = "."
+        when "n"
+          entities << Factory.create_night_item(x,y)
+          a[x][y] = "."
+        when "F"
+          entities << Factory.sunflower_fairy(x,y)
+          a[x][y] = "."
+        when "o"
+          entities << Factory.kedama(x,y)
+          a[x][y] = "."
+        when "O"
+          entities << Factory.red_kedama(x,y)
+          a[x][y] = "."
+        when "c"
+          entities << Factory.crow(x,y)
+          a[x][y] = "."
+        when "K"
+          entities << Factory.kaguya(x,y)
+          a[x][y] = "."
+        end
+        
+        if a[x][y] == "."
+          empties << [x,y]
+        end
+        
+        
+      end
+    end
+    entities << Factory.create_card_item(*empties.sample)
+    @raw = tiles_to_readable a
+  end
+  
+  def find_start
+    a = arraylized
+    width.times do |x|
+      height.times do |y|
+        if a[x][y] == ">"
+          a[x][y] = "."
+          return [x,y]
+        end
+      end
+    end
+  end
+  
+  
   def width
-    return @raw.lines[0].chars.delete_if{|x| x == "\n"}.join.length
+    arraylized.size
   end
   
   def height
-    return @raw.lines.length
+    arraylized[0].size
   end
   
   def uncached_arraylized
     un_m = []
     @raw.lines.each do |l|
-      c = l.chars
+      c = l.chars.to_a
       c = c.delete_if{|e| e=="\n"}
       un_m.push c
     end
@@ -478,7 +542,7 @@ class Map
   end
 
   def blocked?(x,y)
-    !movable_in_map?(self.raw,x,y)
+    !movable_in_map?(self,x,y)
   end
 
   def lines
