@@ -1,0 +1,6 @@
+source 'https://rubygems.org'
+gem 'rake', '~>0.9.2.2'
+gem 'toml-rb'
+gem 'pry'
+gem 'gosu'
+gem 'releasy'

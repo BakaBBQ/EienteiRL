@@ -1,0 +1,24 @@
+
+
+
+wall = ["You bumped into the wall", "Silly me.", "Oh that kind of hurts"]
+
+very_light_dmg = ["%s looks unscathed"]
+light_dmg = ["%s looks unscathed"]
+moderate_to_upper = ["%s is moderately wounded"]
+moderate = ["%s is moderately wounded"]
+moderate_to_lower = ["%s is heavily wounded"]
+dying = ["%s is dying"]
+
+six_realms = ["Bizarreness of Six Realms"]
+mysterious_jack = ["Mysterious Jack"]
+stardust_missle = ["Stardust Missile"]
+flower_slash = ["Flower Slash Upon One's Head"]
+changeling_magic = ["Changeling Magic"]
+close_up_magic = ["Close-up Magic"]
+vanish_everything = ["Vanish Everything"]
+magic_star_sword = ["Magic Star Sword"]
+doll_placement = ["Doll Placement"]
+edo = ["Edo Pawn"]
+ambush = ["Doll Ambush"]
+servant = ["Doll Servant"]
