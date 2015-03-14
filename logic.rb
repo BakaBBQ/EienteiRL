@@ -76,18 +76,20 @@ end
 def update_command(time,entities,map,canvas,minibuffer)
   if button_down?(char_to_button_id('<')) || button_down?(char_to_button_id(','))
     if map.arraylized[entities.first.pos.x][entities.first.pos.y] == "<"
+      pop_msg minibuffer, "You go upstairs... (Continue)"
+      Render.process(time,entities, map, canvas,minibuffer)
       $game.ascend_to_new_level
     else
       pop_msg minibuffer, "There is nowhere to go up."
     end
     @input_timer = 0
-    Render.process(time,entities, map, canvas,minibuffer)
+    #Render.process(time,entities, map, canvas,minibuffer)
   end
   
   if button_down?(char_to_button_id('s'))
     return unless entities.first.hand.size >= 1
     
-    entities.first.hand = entities.first.hand[1...entities.first.hand.size] + entities.first.hand.shift
+    entities.first.hand.push entities.first.hand.shift
     @input_timer = 0
     Render.process(time,entities, map, canvas,minibuffer)
   end
@@ -110,9 +112,8 @@ def update_command(time,entities,map,canvas,minibuffer)
         end
       end
       entities.first.skills.push(Skill.new(1,current_card.name)) unless made
-      entities.first.hand.shift
     end
-    
+    entities.first.hand.shift
     @input_timer = 0
     Render.process(time,entities, map, canvas,minibuffer)
   end
@@ -143,7 +144,7 @@ def turn(time,entities, map, canvas,minibuffer)
   else
     t = 0
     loop do
-      time = time + 1 if rand > (entities.first.np / 100.0)
+      time = time + 1 if rand > (entities.first.np / 100.0) && !entities.first.time_stop
       
       if time >= Time.new(1969,9,12,5,0,0)
         $game.state = :game_over
@@ -169,9 +170,14 @@ def turn(time,entities, map, canvas,minibuffer)
               $game.state = :game_over
             end
             
+            if e.kaguya
+              $game.state = :win
+            end
+            
             if e.drop
               add_drop e,time,entities, map, canvas,minibuffer
             end
+            msg "#{e.name} is slain." if e.name
             entities.delete e unless e.player
           end
         end
@@ -206,4 +212,14 @@ def take_into_player_effect(entities, e, map, minibuffer,canvas)
     end
   end
   e.energy = 0
+  if e.time_stop
+    c = (5 - $game.get_level(:time_stop) * 0.5).floor
+    if e.mp < c
+      e.time_stop = false
+    else
+      e.mp -= c
+      e.energy = e.speed
+    end
+  end
+  
 end

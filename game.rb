@@ -1,3 +1,4 @@
+# encoding: UTF-8
 require 'gosu'
 #require 'toml'
 #require 'pry'
@@ -15,6 +16,8 @@ require_relative 'game_over'
 
 require_relative 'gen/dungeon'
 require_relative 'title'
+
+require 'fileutils'
 
 CANVAS_WIDTH = 75
 CANVAS_HEIGHT = 32
@@ -55,6 +58,11 @@ DIRECTION2VI = {
   9 => 'u',
 }
 
+
+PROFILE_PATH = File.join(Dir.home, "EienteiRL", "profile.rb")
+FileUtils.mkpath File.join(Dir.home, "EienteiRL") unless File.exists?(File.join(Dir.home, "EienteiRL"))
+FileUtils.cp("./presets/profile.rb",path) unless File.exists?(PROFILE_PATH)
+
 class Gosu::Color
   STAIR = Gosu::Color.new(255,180,255,10)
 end
@@ -75,6 +83,7 @@ end
 class GameWindow < Gosu::Window
   attr_accessor :current_level
   attr_accessor :state
+  attr_accessor :minibuffer
   def initialize
     super FONT_WIDTH * CANVAS_WIDTH, FONT_HEIGHT * CANVAS_HEIGHT, false, 50
     self.caption = TITLE
@@ -138,6 +147,7 @@ class GameWindow < Gosu::Window
       a.mp = a.mmp
       a.shot = Skill.new(0,:stardust_missle)
       a.skills = [Skill.new(0,:bullet_absorb),Skill.new(0,:magic_dust)]
+      #a.skills = [Skill.new(0,:bullet_absorb),Skill.new(0,:summer_flame),Skill.new(0,:borrow)]
       a.speed = 9
       a.clazz="Magician"
     when :doll_manipulator
@@ -151,11 +161,67 @@ class GameWindow < Gosu::Window
       a.clazz="Doll Magician"
     end
     
-    profile = eval(slurp("presets/profile.rb"))
-    cards = profile[clazz]
-    a.name = profile[:name]
-    a.deck = cards.collect{|c| Card.new(Glyph.new(c.to_s.chars.to_a.first.capitalize,Gosu::Color.new(255,255,229,180)),c)}
+    begin
+      profile = eval(slurp(PROFILE_PATH))
+      cards = profile[clazz]
+      a.name = profile[:name]
+      if cards.size != 10
+        self.state = :deck_error
+      end
+      a.deck = cards.collect{|c| Card.new(Glyph.new(determine_char(c),Gosu::Color.new(150 + rand(155),150 + rand(155),150 + rand(155))),c)}
+    rescue
+      self.state = :deck_error
+    end
   end
+  
+  def determine_char c
+    case c
+    when :mhp
+      return "♥"
+    when :mmp
+      return "★"
+    when :six_realms
+      return "s"
+    when :mysterious_jack
+      return "m"
+    when :stardust_missle
+      return "s"
+    when :magic_dust
+      return "G"
+    when :flower_slash
+      return "f"
+    when :phosphorus_slash
+      return "P"
+    when :close_up_magic
+      return "c"
+    when :vanish_everything
+      return "v"
+    when :magic_star_sword
+      return "m"
+    when :doll_placement
+      return "p"
+    when :edo
+      return "e"
+    when :ambush
+      return "a"
+    when :servant
+      return "s"
+    when :bullet_absorb
+      return "a"
+    when :summer_flame
+      return "F"
+    when :borrow
+      return "b"
+    when :time_stop
+      return "S"
+    when :doll_recycle
+      return "R"
+    else
+      return c.to_s.chars.to_a.first.capitalize
+    end
+    
+  end
+  
   
   def ascend_to_new_level
     actor = @entities[0]
@@ -184,6 +250,10 @@ class GameWindow < Gosu::Window
       do_turn
     when :game_over
       game_over(@canvas)
+    when :deck_error
+      deck_error(@canvas)
+    when :win
+      game_win(@canvas)
     end
     
     
@@ -200,6 +270,7 @@ class GameWindow < Gosu::Window
         return s.level
       end
     end
+    return 0
   end
   
   

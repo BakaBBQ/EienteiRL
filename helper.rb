@@ -77,9 +77,11 @@ def do_damage_while_pop_message(entity,dmg,minibuffer)
     :light_dmg
   when 91..100
     :very_light_dmg
+  else
+    :do_nothing
   end
   
-  pop_msg(minibuffer, get_vocab(vocab_set, entity.name))
+  pop_msg(minibuffer, get_vocab(vocab_set, entity.name)) unless vocab_set == :do_nothing
   entity.hp = future_hp
 end
 
@@ -161,6 +163,11 @@ end
 def pop_msg(minibuffer,msg)
   minibuffer << msg
 end
+
+def msg(msg)
+  $game.minibuffer << msg
+end
+
 
 def fmt_time(time) # => str
   return time.strftime("%l:%M %p").sub(" ", '')

@@ -29,8 +29,13 @@ class << Movement
           
         elsif m.item
           e.hp = [(e.hp * (1 + m.heal)).floor, e.mhp].min if m.heal
-          e.score += m.point if m.point
-          e.hand << e.deck.shuffle.shift if m.card &&! e.deck.empty?
+          if m.point
+            e.score += (m.point * (1 + e.np / 100.0)).round
+            e.np = [e.np + 5, 100].min
+          end
+          e.deck = e.deck.shuffle!
+          e.hand << e.deck.shift if m.card &&! e.deck.empty?
+          e.np = [e.np + 20, 100].min if m.night
         end
         entities.delete m
       end

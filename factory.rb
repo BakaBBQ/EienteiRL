@@ -1,3 +1,4 @@
+# encoding: UTF-8
 require_relative 'components'
 require_relative 'entity'
 
@@ -70,6 +71,7 @@ class << Factory
       o.energy = 0
       o.speed = 12
       o.dice = lambda{rand(1) + 2}
+      o.drop = :point
     end
     return rabbit
   end
@@ -96,7 +98,7 @@ class << Factory
   def small_fairy(x,y)
     fairy = OpenStruct.new
     fairy.tap do |o|
-      o.glyph = Glyph.new("f", Gosu::Color.new(255,10,10,220))
+      o.glyph = Glyph.new("f", Gosu::Color.new(169, 255, 212))
       o.pos = Pos.new(x,y)
       o.velocity = Velocity.new(0,0)
       o.name = "Small Fairy"
@@ -124,9 +126,11 @@ class << Factory
       o.hp = o.mhp
       o.mind = :kaguya
       
+      o.dice = lambda{rand(5) + 2}
+      
       o.alertness = 5
       o.energy = 0
-      o.speed = 5
+      o.speed = 10
     end
     return kaguya
   end
@@ -134,7 +138,7 @@ class << Factory
   def sunflower_fairy(x,y)
     fairy = OpenStruct.new
     fairy.tap do |o|
-      o.glyph = Glyph.new("F", Gosu::Color.new(255,255,215,0))
+      o.glyph = Glyph.new("F", Gosu::Color.new(204, 255, 221))
       o.pos = Pos.new(x,y)
       o.velocity = Velocity.new(0,0)
       o.name = "Sunflower Fairy"
@@ -206,6 +210,22 @@ class << Factory
     return bullet
   end
   
+  def flame(x,y,life=0.8)
+    flame = OpenStruct.new
+    flame.tap do |o|
+      o.glyph = Glyph.new("Δ", Gosu::Color.new(221,100,53))
+      o.pos = Pos.new(x,y)
+      o.velocity = Velocity.new(0,0)
+      o.speed = 10
+      o.energy = 0
+      o.mind = :flame
+      
+      o.life = life
+    end
+    
+  end
+  
+  
   def create_point_item(x,y)
     point_item = OpenStruct.new
     point_item.tap do |p|
@@ -254,6 +274,7 @@ class << Factory
       p.glyph = g
       p.pos = Pos.new(x,y)
       p.item = true
+      p.night = true
       p.power = 1
     end
     return point_item

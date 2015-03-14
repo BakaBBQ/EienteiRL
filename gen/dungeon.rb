@@ -3,7 +3,7 @@ require_relative 'walker.rb'
 require_relative 'arena.rb'
 
 def create_dungeon( arena, walk_length, level,have_stairs = true, walker = Walker.new )
-  @room_index = 0
+  @room_index ||= 0
   while(walk_length>0)
     walk_length -=1
     
@@ -39,6 +39,7 @@ end
 def create_room(arena, walker,level)
   @room_index += 1
   methods = methods_for level
+  p @room_index % methods.size
   methods.collect{|m| method(m)}[@room_index % methods.size].call(arena,walker,level)
 end
 
@@ -100,7 +101,7 @@ def empty_room(arena, walker, level)
       arena[x+walker.x, y+walker.y] = '.'
       arena[x+walker.x, y+walker.y] = 'p' if rand > 0.98
       arena[x+walker.x, y+walker.y] = 'P' if rand > 0.995
-      arena[x+walker.x, y+walker.y] = 'n' if rand > 0.995
+      arena[x+walker.x, y+walker.y] = 'n' if rand > 0.95
       arena[x+walker.x, y+walker.y] = 'o' if rand > 0.96
     end
   end
@@ -217,10 +218,10 @@ def create_level(level)
   arena = Arena.new
   #p level.class
   create_dungeon(arena,complexity,level)
-  arena[0,0] = '<'
+  arena[0,0] = '<' unless level == 15
   
   if level == 15
-    arena[0,1] = 'K'
+    arena[0,0] = 'K'
   end
   
   return arena
@@ -235,6 +236,13 @@ def guarded_create_level(level)
     guarded_create_level(level)
   end
 end
+
+=begin
+for i in 1..15
+  puts guarded_create_level(i)
+  puts ""
+end
+=end
 
 
 # Create an arena, and set of a walker in it.

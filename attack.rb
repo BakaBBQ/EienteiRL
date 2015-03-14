@@ -9,15 +9,22 @@ class << Attack
     return unless attack_move
 
     attack_move.targets.compact.each do |t|
-      dmg = attack_move.dice.call
+      dmg = 0
+      dmg = attack_move.dice.call if attack_move.dice
+      
       if t.hp
-        t.hp -= dmg
+        do_damage_while_pop_message(t,dmg,minibuffer) unless dmg == 0
+        if t.hp <= 0 && t.player
+          $game.state = :game_over
+        end
+        
       else
         p "something is wrong: e: #{e.name}, t: #{t.name}"
         return
       end
       
-      pop_msg(minibuffer, "damge done: #{dmg}") unless 0 == dmg
+
+      
       t.was_target = true
       if 0 >= t.hp
         t.destroy = true

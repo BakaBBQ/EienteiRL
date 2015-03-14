@@ -18,17 +18,32 @@ def random_move(e,entities,map) #gets all viable places to move, then move to th
   end
   
   possible_vel = all_vel.select{|vel| vel_will_not_collide(e, vel,entities,map)}.sample
+  if possible_vel.nil?
+    return
+  end
   e.velocity.vx = possible_vel.vx
   e.velocity.vy = possible_vel.vy
 end
 
 def bullet_absorb(me,entities,map)
-  bullets = get_bullets_seen(me,entities,map).select{|e| entity_distance(me,e) < 5}
+  lv = $game.get_level(:bullet_absorb)
+  
+  d = [4,5,5,6,6][lv]
+  bullets = get_bullets_seen(me,entities,map).select{|e| entity_distance(me,e) < d}
   
   cnt = 0
   bullets.each do |b|
     entities.delete b
-    #entities << Factory.create_point_item(b.pos.x,b.pos.y) if rand > 0.9 && movable?(entities,map,b.pos.x,b.pos.y)
+    if (rand > 1.0 - lv * 0.05) && movable?(entities,map,b.pos.x,b.pos.y)
+      case rand(5)
+      when 0..1
+        entities << Factory.create_night_item(b.pos.x,b.pos.y) 
+      when 2..4
+        entities << Factory.create_point_item(b.pos.x,b.pos.y) 
+      else
+        entities << Factory.create_power_item(b.pos.x,b.pos.y) 
+      end
+    end
     cnt += 1
   end
 end
@@ -36,22 +51,6 @@ end
 def fairy_ai(me,entities,map)
   #brainlessly shoot bullets
   if rand > 0.5 && me.discovered && entity_distance(entities.first,me) <= 60
-    shoot_bullet(me,entities,"*",Gosu::Color::GREEN,1,0,1)
-    shoot_bullet(me,entities,"*",Gosu::Color::GREEN,0,-1,1)
-    shoot_bullet(me,entities,"*",Gosu::Color::GREEN,-1,0,1)
-    shoot_bullet(me,entities,"*",Gosu::Color::GREEN,0,1,1)
-    
-    shoot_bullet(me,entities,"*",Gosu::Color::FUCHSIA,1,1,1)
-    shoot_bullet(me,entities,"*",Gosu::Color::FUCHSIA,-1,1,1)
-    shoot_bullet(me,entities,"*",Gosu::Color::FUCHSIA,1,-1,1)
-    shoot_bullet(me,entities,"*",Gosu::Color::FUCHSIA,-1,-1,1)
-  end
-  
-end
-
-def sunflower_fairy_ai(me,entities,map)
-  #brainlessly shoot bullets
-  if rand > 0.3 && me.discovered && entity_distance(entities.first,me) <= 60
     shoot_bullet(me,entities,"*",Gosu::Color::GREEN,1,0,3)
     shoot_bullet(me,entities,"*",Gosu::Color::GREEN,0,-1,3)
     shoot_bullet(me,entities,"*",Gosu::Color::GREEN,-1,0,3)
@@ -64,6 +63,66 @@ def sunflower_fairy_ai(me,entities,map)
   end
   
 end
+
+def flame_ai(me,entities,map)
+  offsets = []
+  [-1,0,1].each do |x|
+    [-1,0,1].each do |y|
+      offsets << [me.pos.x + x,me.pos.y + y]
+    end
+  end
+  
+  possible_damage_targets = []
+  possible_more_flames = []
+  offsets.each do |o|
+    possible_damage_targets += get_entity_on(entities,o[0],o[1])
+    if movable?(entities,map,o[0],o[1])
+      possible_more_flames << o
+    end
+  end
+  
+  
+  me.attack_move = AttackMove.new(lambda{4},possible_damage_targets)
+  possible_more_flames.each do |c|
+    entities << Factory.flame(*c,me.life - 0.1) if rand > (1.0 - me.life)
+  end
+  
+  entities.delete(me)
+  
+  #entities << Factory.bullet(me.pos.x + x_offset,me.pos.y + y_offset,x,y,damage,char,color)
+end
+
+
+def sunflower_fairy_ai(me,entities,map)
+  #brainlessly shoot bullets
+  if rand > 0.3 && me.discovered && entity_distance(entities.first,me) <= 60
+    shoot_bullet(me,entities,"*",Gosu::Color::GREEN,1,0,6)
+    shoot_bullet(me,entities,"*",Gosu::Color::GREEN,0,-1,6)
+    shoot_bullet(me,entities,"*",Gosu::Color::GREEN,-1,0,6)
+    shoot_bullet(me,entities,"*",Gosu::Color::GREEN,0,1,6)
+    
+    shoot_bullet(me,entities,"*",Gosu::Color::FUCHSIA,1,1,6)
+    shoot_bullet(me,entities,"*",Gosu::Color::FUCHSIA,-1,1,6)
+    shoot_bullet(me,entities,"*",Gosu::Color::FUCHSIA,1,-1,6)
+    shoot_bullet(me,entities,"*",Gosu::Color::FUCHSIA,-1,-1,6)
+  end
+  
+end
+
+def kaguya_ai(me,entities,map)
+  shoot_bullet(me,entities,"*",Gosu::Color.new(159,50,83),1,0,10)
+  shoot_bullet(me,entities,"*",Gosu::Color.new(159,50,83),0,-1,10)
+  shoot_bullet(me,entities,"*",Gosu::Color.new(159,50,83),-1,0,10)
+  shoot_bullet(me,entities,"*",Gosu::Color.new(159,50,83),0,1,10)
+  
+  shoot_bullet(me,entities,"*",Gosu::Color.new(159,50,83),1,1,10)
+  shoot_bullet(me,entities,"*",Gosu::Color.new(159,50,83),-1,1,10)
+  shoot_bullet(me,entities,"*",Gosu::Color.new(159,50,83),1,-1,10)
+  shoot_bullet(me,entities,"*",Gosu::Color.new(159,50,83),-1,-1,10)
+  
+  simple_melee(me,entities,map)
+end
+
 
 def kedama_ai(me,entities,map)
   #brainlessly shoot bullets
@@ -129,7 +188,7 @@ def ambush(me,entities,map)
   if targets.empty?
 
   else
-    targets = entities.select{|e| (! e.doll) && (! e.player) && (! e.bullet) && entity_distance(me,e) <= 1.5}.sort_by{|e| e.hp}.take(1)
+    targets = entities.select{|e| (! e.doll) && (! e.player) && (! e.bullet) && entity_distance(me,e) <= 1.5}.select{|e|e.hp}.sort_by{|e| e.hp}.take(1)
     me.attack_move = AttackMove.new(dice,targets)
     me.destroy = true
   end
@@ -160,7 +219,7 @@ def move_close_from(e1,e2,entities,map)
   places = places.select{|c| movable?(entities,map,c[0],c[1])}
   
   places.sort_by!{|c| raw_distance(c[0],c[1],e2.pos.x,e2.pos.y)}
-  
+  return if places.empty?
   e1.pos.x = places.first[0]
   e1.pos.y = places.first[1]
 end
@@ -204,6 +263,10 @@ class << Mind
       bullet_absorb(e,entities,map)
     when :sunflower_fairy
       sunflower_fiary_ai(e,entities,map)
+    when :flame
+      flame_ai e, entities, map
+    when :kaguya
+      kaguya_ai e, entities, map
     end
   end
 end

@@ -69,7 +69,7 @@ class << Render
       canvas.draw_text("#{skill.get_name.chars.take(18).join} #{skill.level}",CANVAS_WIDTH - 21,20 + i)
     end
     
-    canvas.draw_deck(CANVAS_WIDTH - 22,CANVAS_HEIGHT - 7,actor.deck - actor.hand,(actor.deck - actor.hand).size * 100)
+    canvas.draw_deck(CANVAS_WIDTH - 22,CANVAS_HEIGHT - 7,actor.deck - actor.hand,(actor.deck).size * 100)
     
 
     canvas.draw_deck(CANVAS_WIDTH - 22,CANVAS_HEIGHT - 6,actor.hand,actor.hand.size * 100)
