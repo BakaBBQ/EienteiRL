@@ -1,6 +1,5 @@
 EienteiRL
 =================
+__finished__
 
-a touhou themed planned 7DRL entry, heavily WIP.
-
-See my blog at https://bakabbq.github.io/ for progress
+a touhou themed planned 7DRL entry, see the github pages for this for more details.
