@@ -109,7 +109,7 @@ class << Factory
       o.alertness = 5
       o.energy = 0
       o.speed = 10
-      
+      o.dice = lambda{rand(2) + 2}
       o.drop = :power
     end
     return fairy
@@ -149,6 +149,8 @@ class << Factory
       o.alertness = 5
       o.energy = 0
       o.speed = 10
+      
+      o.dice = lambda{rand(3) + 2}
       
       o.drop = :power
     end

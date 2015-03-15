@@ -25,6 +25,9 @@ class << Bullet
         if entities.first.just_moved
         else
           entities.first.hp -= e.damage
+          if entities.first.hp <= 0
+            entities.first.destroy = true
+          end
         end
         e.destroy = true
       else

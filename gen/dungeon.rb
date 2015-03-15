@@ -86,6 +86,7 @@ def methods_for(level,route=:a)
   when 15
     methods = [
       :sunflower_fairy_room,
+      :crow_room,
     ]
   end
   return methods
@@ -191,7 +192,8 @@ def medicine_room_hard(arena, walker, level)
       arena[x+walker.x, y+walker.y] = '.'
       arena[x+walker.x, y+walker.y] = ',' if rand > 0.8 && arena[x+walker.x, y+walker.y] == '.'
       arena[x+walker.x, y+walker.y] = 'o' if rand > 0.99
-      arena[x+walker.x, y+walker.y] = 'r' if rand > 0.98
+      arena[x+walker.x, y+walker.y] = 'r' if rand > 0.95
+      arena[x+walker.x, y+walker.y] = 'c' if rand > 0.98
     end
   end
 end

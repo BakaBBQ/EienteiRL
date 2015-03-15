@@ -60,6 +60,15 @@ DIRECTION2VI = {
 
 
 PROFILE_PATH = File.join(Dir.home, "EienteiRL", "profile.rb")
+def screenshot_path
+  t = Time.now
+  fmt = "%m-%e-%y_%H:%M"
+  name = $game.player.name
+  clazz = $game.player.clazz
+  level = $game.current_level
+  return File.join(Dir.home, "EienteiRL", "#{name}-#{clazz}-#{level}_#{t.strftime(fmt)}.jpg")
+end
+
 FileUtils.mkpath File.join(Dir.home, "EienteiRL") unless File.exists?(File.join(Dir.home, "EienteiRL"))
 FileUtils.cp("./presets/profile.rb",PROFILE_PATH) unless File.exists?(PROFILE_PATH)
 

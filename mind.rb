@@ -1,3 +1,4 @@
+# encoding: UTF-8
 class Mind ; end
 
 
@@ -50,7 +51,7 @@ end
 
 def fairy_ai(me,entities,map)
   #brainlessly shoot bullets
-  if rand > 0.5 && me.discovered && entity_distance(entities.first,me) <= 60
+  if rand > 0.8 && me.discovered && entity_distance(entities.first,me) <= 60
     shoot_bullet(me,entities,"*",Gosu::Color::GREEN,1,0,3)
     shoot_bullet(me,entities,"*",Gosu::Color::GREEN,0,-1,3)
     shoot_bullet(me,entities,"*",Gosu::Color::GREEN,-1,0,3)
@@ -61,7 +62,7 @@ def fairy_ai(me,entities,map)
     shoot_bullet(me,entities,"*",Gosu::Color::FUCHSIA,1,-1,3)
     shoot_bullet(me,entities,"*",Gosu::Color::FUCHSIA,-1,-1,3)
   end
-  
+  simple_melee(me,entities,map)
 end
 
 def flame_ai(me,entities,map)
@@ -95,7 +96,7 @@ end
 
 def sunflower_fairy_ai(me,entities,map)
   #brainlessly shoot bullets
-  if rand > 0.3 && me.discovered && entity_distance(entities.first,me) <= 60
+  if rand > 0.8 && me.discovered && entity_distance(entities.first,me) <= 60
     shoot_bullet(me,entities,"*",Gosu::Color::GREEN,1,0,6)
     shoot_bullet(me,entities,"*",Gosu::Color::GREEN,0,-1,6)
     shoot_bullet(me,entities,"*",Gosu::Color::GREEN,-1,0,6)
@@ -106,7 +107,7 @@ def sunflower_fairy_ai(me,entities,map)
     shoot_bullet(me,entities,"*",Gosu::Color::FUCHSIA,1,-1,6)
     shoot_bullet(me,entities,"*",Gosu::Color::FUCHSIA,-1,-1,6)
   end
-  
+  simple_melee(me,entities,map)
 end
 
 def kaguya_ai(me,entities,map)
@@ -133,6 +134,22 @@ def kedama_ai(me,entities,map)
       shoot_bullet(me,entities,"*",Gosu::Color.new(140,20,240),-1,0,4)
       shoot_bullet(me,entities,"*",Gosu::Color.new(140,20,240),0,1,4)
       shoot_bullet(me,entities,"*",Gosu::Color.new(140,20,240),0,-1,4)
+    end
+    
+    
+    random_move(me,entities,map)
+  end
+end
+
+def red_kedama_ai(me,entities,map)
+  #brainlessly shoot bullets
+  
+  if me.discovered && entity_distance(entities.first,me) <= 30
+    if rand > 0.8
+      shoot_bullet(me,entities,"●",Gosu::Color.new(140,20,240),1,0,5)
+      shoot_bullet(me,entities,"●",Gosu::Color.new(140,20,240),-1,0,5)
+      shoot_bullet(me,entities,"●",Gosu::Color.new(140,20,240),0,1,5)
+      shoot_bullet(me,entities,"●",Gosu::Color.new(140,20,240),0,-1,5)
     end
     
     
@@ -173,7 +190,9 @@ def edo(me,entities,map)
   targets = entities.select{|e| (!e.player) && (! e.doll) && (! e.bullet) && entity_distance(me,e) <= 1.5}
   if targets.empty?
     # walk towards the nearest enemy
-    move_close_from(me,entities.select{|e| (!e.player) && (! e.doll)}.sort_by{|e| entity_distance(me,e)}.first,entities,map)
+    possible_target = entities.select{|e| (!e.player) && (! e.doll)}.sort_by{|e| entity_distance(me,e)}.first
+    return if possible_target.nil?
+    move_close_from(me,possible_target,entities,map)
   else
     # we find a possible target, now explode
     targets = entities.select{|e| entity_distance(me,e) <= 1.5}
@@ -259,6 +278,8 @@ class << Mind
       fairy_ai(e,entities,map)
     when :kedama
       kedama_ai(e,entities,map)
+    when :red_kedama
+      red_kedama_ai(e,entities,map)
     when :bullet_absorber
       bullet_absorb(e,entities,map)
     when :sunflower_fairy

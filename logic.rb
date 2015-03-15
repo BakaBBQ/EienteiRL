@@ -94,6 +94,7 @@ def update_command(time,entities,map,canvas,minibuffer)
     Render.process(time,entities, map, canvas,minibuffer)
   end
   
+  
   if button_down?(char_to_button_id('d'))
     return unless entities.first.hand.size >= 1
     
