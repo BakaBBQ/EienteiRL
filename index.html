@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Eienteirl : this is a guide to make this game playable for everyone who wants to play it">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Eienteirl</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/BakaBBQ/EienteiRL">View on GitHub</a>
+
+          <h1 id="project_title">Eienteirl</h1>
+          <h2 id="project_tagline">this is a guide to make this game playable for everyone who wants to play it</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/BakaBBQ/EienteiRL/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/BakaBBQ/EienteiRL/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a id="simple-guide" class="anchor" href="#simple-guide" aria-hidden="true"><span class="octicon octicon-link"></span></a>Simple Guide</h1>
+
+<p>This is a guide to make this game more playable and less confusing and less exasperating.</p>
+
+<h2>
+<a id="where-to-download" class="anchor" href="#where-to-download" aria-hidden="true"><span class="octicon octicon-link"></span></a>Where to download?</h2>
+
+<p>I publish all the releases through github releases. Simply go there to download:</p>
+
+<p>If you want to find the 7DRL version, then: <a href="https://github.com/BakaBBQ/EienteiRL/releases/tag/v7drl-b">v7drl-b</a> is your way to go.</p>
+
+<p>If you want to find a less bugged, more fun version, then you should download the <a href="https://github.com/BakaBBQ/EienteiRL/releases">latest version</a>.</p>
+
+<p>Windows and OS X builds are avaliable.</p>
+
+<p>For linux, you need to run from source. Thus you have to</p>
+
+<ul>
+<li>install ruby (&gt; 1.9 is recommended)</li>
+<li>install <a href="http://www.libgosu.org">gosu</a>
+</li>
+<li>go to the root directory of the game and run <code>ruby Main.rb</code>
+</li>
+</ul>
+
+<h2>
+<a id="basic-controls" class="anchor" href="#basic-controls" aria-hidden="true"><span class="octicon octicon-link"></span></a>Basic Controls</h2>
+
+<ul>
+<li>
+<strong>[vi-keys or numpad]</strong> movement</li>
+<li>
+<strong>[f]</strong> primary shot</li>
+<li>
+<strong>[q,w,e,r]</strong> corresponds to the four skills you have</li>
+<li>
+<strong>[&lt; or ,]</strong> ascend to next floor (at stairs)</li>
+<li>
+<strong>[d]</strong> use the current card (see the <em>Deck</em> section for more info)</li>
+<li>
+<strong>[s]</strong> shift to the next card </li>
+</ul>
+
+<h2>
+<a id="mechanics" class="anchor" href="#mechanics" aria-hidden="true"><span class="octicon octicon-link"></span></a>Mechanics</h2>
+
+<ul>
+<li>Your <strong>hp should be more than zero</strong> to survive.</li>
+<li>Auto gameover if time reaches <strong>5:00 AM</strong>.</li>
+<li><p>Killing Kaguya at floor 15 entails winning.</p></li>
+<li><p>Your primary shot <strong>[f] costs 5 mp</strong>.</p></li>
+<li>All of your skills <strong>[q,w,e,r] costs 10 mp</strong>.</li>
+<li><p>Every turn you regenerate 1 mp.</p></li>
+<li><p>Time starts at <strong>2:00AM</strong> .</p></li>
+<li>Time flows (at a quite slow rate).</li>
+<li>The more np (night point) you have, the slower time flows.</li>
+<li>Night points decrease rapidly (1 point per turn) when no enemies are around.</li>
+<li><p>Night points decrease slowly when enemies are near.</p></li>
+<li><p>Point items (blue "p") increase your score and increase your np by 5 points.</p></li>
+<li>Power items (red "p") heals you for a small amount.</li>
+<li>Night items (red "n") increase you np by 20 points.</li>
+<li><p>Card items (purple "c") draws a card from a deck.</p></li>
+<li><p>There is no way to save your game</p></li>
+<li>Permadeath</li>
+</ul>
+
+<h2>
+<a id="bullets" class="anchor" href="#bullets" aria-hidden="true"><span class="octicon octicon-link"></span></a>Bullets</h2>
+
+<p>Bullets don't behave like actual bullets (as in the shooter games), for they are not for you to actually dodge.
+Rather they are only there for forcing you to move (or in fighter game jargons, they are there for zoning purposes),
+you can graze bullets (destroy them) by moving thru them, that means: <strong>as long as you keep moving, these bullets cannot hit you</strong>.</p>
+
+<p>Nonetheless, sometimes bullet spamming enemies will be paired up with melee-centered enemies, and that is the real problem.</p>
+
+<h2>
+<a id="deck--profile" class="anchor" href="#deck--profile" aria-hidden="true"><span class="octicon octicon-link"></span></a>Deck &amp; Profile</h2>
+
+<p>The only way to upgrade your ability is thru your decks. Every time you pick up a "c" item, you draw one card from you deck.
+When a game starts, your profile ("~/EienteiRL/profile.rb" on unix and "%userprofile%/EienteiRL/profile.rb" on windows) is loaded.
+Pressing <strong>d</strong> uses the current card, which will provide you with either an upgrade in skill, or an upgrade to your mhp or mmp.</p>
+
+<p>Skills can have a max level of four, and you can bring more than four cards for the same skill (though it would be a waste of card),
+you should only bring skills for your own class (that means you can bring other classes' skills as well, but it would be considered cheating).
+Only bring 10 cards per deck.</p>
+
+<h2>
+<a id="skills-info" class="anchor" href="#skills-info" aria-hidden="true"><span class="octicon octicon-link"></span></a>Skills Info</h2>
+
+<blockquote>
+<p>Note: this was meant to be in game description (currently not because I ran out of time)</p>
+</blockquote>
+
+<h3>
+<a id="classes" class="anchor" href="#classes" aria-hidden="true"><span class="octicon octicon-link"></span></a>Classes</h3>
+
+<h4>
+<a id="gardener" class="anchor" href="#gardener" aria-hidden="true"><span class="octicon octicon-link"></span></a>Gardener</h4>
+
+<table>
+<thead>
+<tr>
+<th>Skill</th>
+<th>Code Name (use this in your profile)</th>
+<th>Description</th>
+<th>Derives from</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Phantom Shot (primary shot)</td>
+<td>:six_realms</td>
+<td>A ranged shot that hits enemy on the same line</td>
+<td>IN Youmu's shot</td>
+</tr>
+<tr>
+<td>Lotus Cut</td>
+<td>:flower_slash</td>
+<td>A somewhat high damage slash that run-passes the enemy</td>
+<td>SWRS Youmu's alt214</td>
+</tr>
+<tr>
+<td>Phosphorus Slash</td>
+<td>:phosphorus_slash</td>
+<td>A short-range multi-target slash</td>
+<td>SWRS Youmu's alt236</td>
+</tr>
+</tbody>
+</table>
+
+<h4>
+<a id="time-maid" class="anchor" href="#time-maid" aria-hidden="true"><span class="octicon octicon-link"></span></a>Time Maid</h4>
+
+<table>
+<thead>
+<tr>
+<th>Skill</th>
+<th>Code Name (use this in your profile)</th>
+<th>Description</th>
+<th>Derives from</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Mysterious Jack(primary shot)</td>
+<td>:mysterious_jack</td>
+<td>A long-range single-target shot</td>
+<td>IN Sakuya's Shot</td>
+</tr>
+<tr>
+<td>Close-up Magic</td>
+<td>:close_up_magic</td>
+<td>A middle-range multi-target all-around skill</td>
+<td>SWRS Sakuya's 623</td>
+</tr>
+<tr>
+<td>Vanish Everything</td>
+<td>:vanish_everything</td>
+<td>Teleport to the nearest enemy, upgrading to lv2 makes this a lot safer</td>
+<td>SWRS Sakuya's 22</td>
+</tr>
+<tr>
+<td>Magic Star Sword</td>
+<td>:magic_star_sword</td>
+<td>Long range, multi-target scan that hits enemy on the same line</td>
+<td>SWRS Sakuya's 236</td>
+</tr>
+<tr>
+<td>Sakuya's World</td>
+<td>:time_stop</td>
+<td>Stops the time, while every turn drains the player's spirit, upgrading decreases spirit cost per turn.</td>
+<td>SWRS Sakuya's Spellcard</td>
+</tr>
+</tbody>
+</table>
+
+<h4>
+<a id="magician" class="anchor" href="#magician" aria-hidden="true"><span class="octicon octicon-link"></span></a>Magician</h4>
+
+<table>
+<thead>
+<tr>
+<th>Skill</th>
+<th>Code Name (use this in your profile)</th>
+<th>Description</th>
+<th>Derives from</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Stardust Missle(primary shot)</td>
+<td>:stardust_missle</td>
+<td>Puffball with a special explosion-type range.</td>
+<td>IN Marisa's Shot</td>
+</tr>
+<tr>
+<td>Grand Stardust</td>
+<td>:magic_dust</td>
+<td>Upgraded version of the primary shot, upgrading generates bigger explosion.</td>
+<td>SWRS Marisa's 22</td>
+</tr>
+<tr>
+<td>Bullet Absorber</td>
+<td>:bullet_absorb</td>
+<td>Throws out an entity that clears bullet around it, starting from lv1 the entity will convert bullet to items at random rate.</td>
+<td>DDC MarisaB's bomb</td>
+</tr>
+<tr>
+<td>Summer Flame</td>
+<td>:summer_flame</td>
+<td>Summons a magic flame, which will quickly expand over the room, high-damaging (both to your enemy and to you) potential.</td>
+<td>SWRS Patchouli's alt236</td>
+</tr>
+<tr>
+<td>Borrow</td>
+<td>:borrow</td>
+<td>1-tile-range steal skill</td>
+<td>Fandom of Marisa</td>
+</tr>
+</tbody>
+</table>
+
+<h4>
+<a id="doll-manipulator" class="anchor" href="#doll-manipulator" aria-hidden="true"><span class="octicon octicon-link"></span></a>Doll Manipulator</h4>
+
+<table>
+<thead>
+<tr>
+<th>Skill</th>
+<th>Code Name (use this in your profile)</th>
+<th>Description</th>
+<th>Derives from</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Doll Placement(primary shot)</td>
+<td>:doll_placement</td>
+<td>Places a doll at a somewhat random position, the doll will try to damage the enemy near it every turn.</td>
+<td>SWRS Alice's 236</td>
+</tr>
+<tr>
+<td>Edo Pawn</td>
+<td>:edo</td>
+<td>Places a doll, the doll will try to approach an enemy and explode, the explosion has high damage and could hurt you as well.</td>
+<td>SWRS Alice's alt623</td>
+</tr>
+<tr>
+<td>Doll Ambush</td>
+<td>:ambush</td>
+<td>Places dolls near you, the dolls, when find enemies in 1-distance, will attack the enemy and disappear, upgrading summons more dolls.</td>
+<td>SWRS Alice's alt236</td>
+</tr>
+<tr>
+<td>Doll Servant</td>
+<td>:servant</td>
+<td>Summons a doll that will follow you and try to attack enemies when near.</td>
+<td>None.</td>
+</tr>
+<tr>
+<td>Doll Recycle</td>
+<td>:doll_recycle</td>
+<td>Counts all dolls on the map, clears them, then replenishes your mp for a bit, upgrading regenerates more mp.</td>
+<td>None.</td>
+</tr>
+</tbody>
+</table>
+
+<h4>
+<a id="others" class="anchor" href="#others" aria-hidden="true"><span class="octicon octicon-link"></span></a>Others</h4>
+
+<p><strong>:mhp</strong> and <strong>:mmp</strong> could be used in decks to indicate an upgrade to your max hp and max mp.</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Eienteirl maintained by <a href="https://github.com/BakaBBQ">BakaBBQ</a></p>
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
